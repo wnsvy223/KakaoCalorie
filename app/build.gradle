@@ -1,0 +1,56 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "com.example.wnsvy.kakaocalorie"
+        minSdkVersion 24
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //noinspection GradleCompatible
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:customtabs:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:mediarouter-v7:27.1.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.android.support:cardview-v7:27.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.mcxiaoke.volley:library:1.0.19'
+    implementation group: project.KAKAO_SDK_GROUP, name: 'usermgmt', version: project.KAKAO_SDK_VERSION
+    implementation 'com.kakao.sdk:kakaotalk:1.11.1'
+    implementation 'com.kakao.sdk:friends:1.11.1'
+    implementation 'com.github.bumptech.glide:glide:4.6.1'
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
+    implementation 'com.google.android.gms:play-services-fitness:16.0.1'
+    implementation "com.google.android.gms:play-services-auth:16.0.1"
+    implementation 'com.mikhaellopez:circularprogressbar:2.0.0'
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
+    implementation 'tk.jamun.elements:circularimageview:0.0.1'
+    implementation "android.arch.work:work-runtime:1.0.0-alpha12"
+    implementation 'com.github.PhilJay:MPAndroidChart:v2.0.9'
+    implementation 'com.orhanobut:dialogplus:1.11@aar'
+    implementation 'com.android.support:support-v4:27.1.1'
+
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+apply plugin: 'com.google.gms.google-services'

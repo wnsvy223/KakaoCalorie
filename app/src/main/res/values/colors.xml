@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#22b6f1</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="color1">#404040</color>
+    <color name="color2">#B2B2B2</color>
+    <color name="color3">#2A2A2A</color>
+    <color name="color4">#E5E5E5</color>
+    <color name="color5">#F6F6F6</color>
+    <color name="color6">#FFFFFF</color>
+    <color name="color7">#000000</color>
+    <color name="color8">#4A4A4C</color>
+    <color name="color9">#ff0008</color>
+    <color name="backGround">#22b6f1</color>
+    <color name="on">#22b6f1</color>
+    <color name="off">#ffea08</color>
+    <color name="progress1">#fffb00</color>
+    <color name="progress2">#fbdf3f</color>
+    <color name="progress3">#f7d511</color>
+    <color name="progress4">#fad000</color>
+    <color name="cal">#fad000</color>
+    <color name="distance">#00d5fa</color>
+    <color name="step">#4cf958</color>
+</resources>

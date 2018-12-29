@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "44197564732",
+    "firebase_url": "https://kakaocalorie.firebaseio.com",
+    "project_id": "kakaocalorie",
+    "storage_bucket": "kakaocalorie.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44197564732:android:ce2d6d8c4333e3cc",
+        "android_client_info": {
+          "package_name": "com.example.wnsvy.kakaocalorie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "44197564732-ghhlant91herco31ah443n5teo4e49qs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAw259gdy_myzaLGtbdBxmJezCCLdqv3k"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
