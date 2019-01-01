@@ -1,11 +1,12 @@
 package com.example.wnsvy.kakaocalorie.Activity;
 
 import android.Manifest;
-import android.content.DialogInterface;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -13,19 +14,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.wnsvy.kakaocalorie.Adapter.FriendsListAdapter;
 import com.example.wnsvy.kakaocalorie.Application.GlobalApplication;
+import com.example.wnsvy.kakaocalorie.Fragment.RankFragment;
 import com.example.wnsvy.kakaocalorie.Model.RankModel;
 import com.example.wnsvy.kakaocalorie.R;
-import com.example.wnsvy.kakaocalorie.Service.JsonGetAsyncTask;
+import com.example.wnsvy.kakaocalorie.Service.JsonPostAsyncTask;
 import com.example.wnsvy.kakaocalorie.Service.UpdateDbService;
 import com.example.wnsvy.kakaocalorie.Utils.JobDispatcherUtils;
+import com.example.wnsvy.kakaocalorie.Utils.Logger;
 import com.example.wnsvy.kakaocalorie.Utils.PermissionUtils;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
@@ -37,6 +40,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.FitnessOptions;
 import com.google.android.gms.fitness.data.DataType;
 import com.kakao.auth.Session;
+import com.kakao.friends.AppFriendContext;
+import com.kakao.friends.response.AppFriendsResponse;
+import com.kakao.friends.response.model.AppFriendInfo;
+import com.kakao.kakaotalk.callback.TalkResponseCallback;
+import com.kakao.kakaotalk.v2.KakaoTalkService;
+import com.kakao.network.ErrorResult;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
@@ -46,9 +55,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import tk.jamun.elements.circularimageview.CircularImageView;
@@ -78,6 +85,8 @@ public class LoginActivity extends AppCompatActivity{
     public ImageButton stepLog;
     private final String CUSTOM_ADAPTER_IMAGE = "image";
     private final String CUSTOM_ADAPTER_TEXT = "text";
+    private FragmentManager fragmentManager;
+    private RankFragment rankFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,73 +161,97 @@ public class LoginActivity extends AppCompatActivity{
         profileImgae.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                JsonGetAsyncTask jsonGetAsyncTask =  new JsonGetAsyncTask("http://192.168.0.29:3000/show-all-data",null);
-                // 노드서버 순위정보 rest url 호출
-                try {
-                    String result = jsonGetAsyncTask.execute().get(); // AsyncTask의 결과값을 문자열로 반환. -> 서버응답이 지연될경우 UI블럭됨
-                    try {
-                        JSONArray jsonArray = new JSONArray(result); // 반환된 문자열을 jsonArray 형태로 받아서 json object들의 키값에 접근할 수 있도록 객체 생성.
-                        ArrayList<String> idList = new ArrayList<>();
-                        ArrayList<String> photoList = new ArrayList<>();
-                        String[] arrId = {};
-                        String[] arrPhoto = {};
-                        for(int i=0; i<jsonArray.length(); i++){ // 생성된 jsonArray를 순회하며 각 키값에 접근하여 데이터를 가져옴.
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            String id = jsonObject.getString("userEmail");
-                            String photo = jsonObject.getString("userPhoto");
-                            //String footstep = jsonObject.getString("footstep");
-                            //String distance = jsonObject.getString("distance");
-                            //Log.d("파싱값(아이디)", id);
-                            //Log.d("파싱값(사진)", photo);
-                            //Log.d("파싱값(걸음)", footstep);
-                            //Log.d("파싱값(거리)", distance);
-                            //RankModel rankModel = new RankModel(id,photo,footstep,distance);
-                            //Log.d("모델클래스", String.valueOf(rankModel));
-                            idList.add(id);
-                            photoList.add(photo);
-                            arrId = idList.toArray(new String[idList.size()]);
-                            arrPhoto = photoList.toArray(new String[photoList.size()]);
-
-                        }
-                        showLIstDialog(arrId,arrPhoto);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
+                requestFriends();
             }
         });
     }
 
-    private void showLIstDialog(String[] arrId, String[] arrPhoto){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setIcon(R.mipmap.ic_foots_round);
-        builder.setTitle("오늘의 운동왕");
-        List<Map<String,Object>> dialogItemLIst = new ArrayList<Map<String,Object>>();
-        int listTimeLen = arrId.length;
-        for(int i=0; i<listTimeLen; i++){
-            Map<String, Object> itemMap = new HashMap<String,Object>();
-            itemMap.put(CUSTOM_ADAPTER_TEXT,arrId[i]);
-            itemMap.put(CUSTOM_ADAPTER_IMAGE,arrPhoto[i]);
-            dialogItemLIst.add(itemMap);
-        }
-        Log.d("테스트", String.valueOf(dialogItemLIst));
-        SimpleAdapter simpleAdapter = new SimpleAdapter(this,dialogItemLIst,
-            R.layout.alert_dialog_list,
-            new String[]{CUSTOM_ADAPTER_IMAGE, CUSTOM_ADAPTER_TEXT},
-            new int[]{R.id.alertDialogItemImageView,R.id.alertDialogItemTextView}
-        );
-        builder.setAdapter(simpleAdapter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+    public void requestFriends() {
+        AppFriendContext appFriendContext = new AppFriendContext(true, 0, 100, "asc");
+        KakaoTalkService.getInstance().requestAppFriends(appFriendContext,
+                new TalkResponseCallback<AppFriendsResponse>() {
+                    @Override
+                    public void onNotKakaoTalkUser() {
+                        Toast.makeText(getApplicationContext(),"카카오톡 가입 유저가 아닙니다.",Toast.LENGTH_SHORT).show();
+                    }
 
+                    @Override
+                    public void onSessionClosed(ErrorResult errorResult) {
+                        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onNotSignedUp() {
+                        //redirectSignupActivity();
+                    }
+
+                    @Override
+                    public void onFailure(ErrorResult errorResult) {
+                        Logger.e("onFailure: " + errorResult.toString());
+                    }
+
+                    @Override
+                    public void onSuccess(AppFriendsResponse result) {
+                        // 친구 목록
+                        Logger.e("Friends: " + result.getFriends().toString());
+                        // context의 beforeUrl과 afterUrl이 업데이트 된 상태.
+
+                        SharedPreferences sharedPreferences = getSharedPreferences("user",MODE_PRIVATE );
+                        long myToken = sharedPreferences.getLong("token", 0);
+
+                        List<AppFriendInfo> list = result.getFriends();
+                        List<Long> tokenList = new ArrayList<>();
+                        tokenList.add(myToken);
+                        for (int i=0; i<list.size(); i++){
+                            long token = list.get(i).getId();
+                            tokenList.add(token);
+                        }
+                        getRank(tokenList);
+                    }
+                });
+    }
+
+    public void getRank(List<Long> token){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.accumulate("friendTokenList", token);
+            JsonPostAsyncTask jsonPostAsyncTask = new JsonPostAsyncTask("http://192.168.0.29:3000/show-rank",jsonObject);
+            try {
+                String res = jsonPostAsyncTask.execute().get();
+                Log.d("제이슨", String.valueOf(res));
+                JSONArray jsonArray = new JSONArray(res);
+                ArrayList<RankModel> rankList = new ArrayList<>();
+                for(int i=0; i<jsonArray.length(); i++){ // 생성된 jsonArray를 순회하며 각 키값에 접근하여 데이터를 가져옴.
+                    JSONObject object = jsonArray.getJSONObject(i);
+                    String id = object.getString("userID");
+                    String email = object.getString("userEmail");
+                    String photo = object.getString("userPhoto");
+                    String footstep = object.getString("footstep");
+                    String distance = object.getString("distance");
+                    Log.d("파싱값(아이디)", id);
+                    Log.d("파싱값(이메일)", email);
+                    Log.d("파싱값(사진)", photo);
+                    Log.d("파싱값(걸음)", footstep);
+                    Log.d("파싱값(거리)", distance);
+                    RankModel rankModel = new RankModel(id,email,photo,footstep,distance);
+                    rankList.add(rankModel);
+                }
+                FragmentManager fragmentManager = getFragmentManager();
+                RankFragment rankFragment = new RankFragment();
+                rankFragment.setStyle(DialogFragment.STYLE_NORMAL,R.style.CustomDialog);
+                Bundle bundle = new Bundle(1);
+                bundle.putParcelableArrayList("friendProfile",rankList);
+                rankFragment.setArguments(bundle);
+                rankFragment.show(fragmentManager,"TV_tag");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
             }
-        });
-       builder.create();
-       builder.show();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
