@@ -11,7 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
+
 import com.example.wnsvy.kakaocalorie.R;
 import com.example.wnsvy.kakaocalorie.Service.JsonPostAsyncTask;
 import com.kakao.auth.AccessTokenCallback;
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                             // 유저 테이블 생성 및 로그인 관련 노드서버와 통신
                             // 통신에 필요한 url과 데이터값을 JsonObject 만들어 생성자에 넘겨줌.
 
-                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            Intent intent = new Intent(MainActivity.this, UserDataActivity.class);
                             intent.putExtra("profileImage",url);
                             intent.putExtra("id",id);
                             intent.putExtra("email",email);

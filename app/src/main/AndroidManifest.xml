@@ -30,7 +30,7 @@
             android:value="@string/kakao_app_key" />
 
         <activity
-            android:name=".Activity.LoginActivity"
+            android:name=".Activity.UserDataActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".Activity.FriendActivity" />
 

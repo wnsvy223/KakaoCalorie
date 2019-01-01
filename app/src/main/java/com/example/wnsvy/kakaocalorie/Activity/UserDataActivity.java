@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.wnsvy.kakaocalorie.Adapter.FriendsListAdapter;
 import com.example.wnsvy.kakaocalorie.Application.GlobalApplication;
 import com.example.wnsvy.kakaocalorie.Fragment.RankFragment;
 import com.example.wnsvy.kakaocalorie.Model.RankModel;
@@ -62,7 +61,7 @@ import tk.jamun.elements.circularimageview.CircularImageView;
 
 
 
-public class LoginActivity extends AppCompatActivity{
+public class UserDataActivity extends AppCompatActivity{
 
     public static final String TAG = "BasicHistoryApi";
     private static final int REQUEST_OAUTH_REQUEST_CODE = 1;
@@ -91,7 +90,7 @@ public class LoginActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_userData);
 
         initView();
 
@@ -121,7 +120,7 @@ public class LoginActivity extends AppCompatActivity{
         stepLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, LogActivity.class);
+                Intent intent = new Intent(UserDataActivity.this, LogActivity.class);
                 startActivity(intent);
             }
         });
@@ -129,7 +128,7 @@ public class LoginActivity extends AppCompatActivity{
         distanceLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, LogActivity.class);
+                Intent intent = new Intent(UserDataActivity.this, LogActivity.class);
                 startActivity(intent);
             }
         });
@@ -137,7 +136,7 @@ public class LoginActivity extends AppCompatActivity{
         calorieLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, LogActivity.class);
+                Intent intent = new Intent(UserDataActivity.this, LogActivity.class);
                 startActivity(intent);
             }
         });
