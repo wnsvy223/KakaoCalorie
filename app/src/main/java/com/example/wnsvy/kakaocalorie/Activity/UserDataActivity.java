@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.wnsvy.kakaocalorie.Application.GlobalApplication;
 import com.example.wnsvy.kakaocalorie.Fragment.RankFragment;
+import com.example.wnsvy.kakaocalorie.Interface.AsyncTaskEventListener;
 import com.example.wnsvy.kakaocalorie.Model.RankModel;
 import com.example.wnsvy.kakaocalorie.R;
 import com.example.wnsvy.kakaocalorie.Service.JsonPostAsyncTask;
@@ -82,15 +83,13 @@ public class UserDataActivity extends AppCompatActivity{
     public ImageButton distanceLog;
     public ImageButton calorieLog;
     public ImageButton stepLog;
-    private final String CUSTOM_ADAPTER_IMAGE = "image";
-    private final String CUSTOM_ADAPTER_TEXT = "text";
     private FragmentManager fragmentManager;
     private RankFragment rankFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_userData);
+        setContentView(R.layout.activity_userdata);
 
         initView();
 
@@ -211,11 +210,50 @@ public class UserDataActivity extends AppCompatActivity{
                 });
     }
 
+
     public void getRank(List<Long> token){
         JSONObject jsonObject = new JSONObject();
+        String restUrl = "http://192.168.0.29:3000/show-rank";
         try {
             jsonObject.accumulate("friendTokenList", token);
-            JsonPostAsyncTask jsonPostAsyncTask = new JsonPostAsyncTask("http://192.168.0.29:3000/show-rank",jsonObject);
+            JsonPostAsyncTask jsonPostAsyncTask = new JsonPostAsyncTask(restUrl, jsonObject
+                    , getApplicationContext(), new AsyncTaskEventListener<String>() {
+                @Override
+                public void onSuccess(String res) {
+                    Log.d("제이슨", String.valueOf(res));
+                    try {
+                        JSONArray jsonArray = new JSONArray(res);
+                        ArrayList<RankModel> rankList = new ArrayList<>();
+                        for(int i=0; i<jsonArray.length(); i++){ // 생성된 jsonArray를 순회하며 각 키값에 접근하여 데이터를 가져옴.
+                            JSONObject object = jsonArray.getJSONObject(i);
+                            String id = object.getString("userID");
+                            String email = object.getString("userEmail");
+                            String photo = object.getString("userPhoto");
+                            String footstep = object.getString("footstep");
+                            String distance = object.getString("distance");
+                            RankModel rankModel = new RankModel(id,email,photo,footstep,distance);
+                            rankList.add(rankModel);
+                        }
+                        FragmentManager fragmentManager = getFragmentManager();
+                        RankFragment rankFragment = new RankFragment();
+                        rankFragment.setStyle(DialogFragment.STYLE_NORMAL,R.style.CustomDialog);
+                        Bundle bundle = new Bundle(1);
+                        bundle.putParcelableArrayList("friendProfile",rankList);
+                        rankFragment.setArguments(bundle);
+                        rankFragment.show(fragmentManager,"TV_tag");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Log.d("AsyncTaskErr","Failed send to server"+ restUrl);
+                }
+            });
+            jsonPostAsyncTask.execute();
+
+            /*
             try {
                 String res = jsonPostAsyncTask.execute().get();
                 Log.d("제이슨", String.valueOf(res));
@@ -228,11 +266,6 @@ public class UserDataActivity extends AppCompatActivity{
                     String photo = object.getString("userPhoto");
                     String footstep = object.getString("footstep");
                     String distance = object.getString("distance");
-                    Log.d("파싱값(아이디)", id);
-                    Log.d("파싱값(이메일)", email);
-                    Log.d("파싱값(사진)", photo);
-                    Log.d("파싱값(걸음)", footstep);
-                    Log.d("파싱값(거리)", distance);
                     RankModel rankModel = new RankModel(id,email,photo,footstep,distance);
                     rankList.add(rankModel);
                 }
@@ -248,10 +281,13 @@ public class UserDataActivity extends AppCompatActivity{
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
+            */
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
     }
+
 
     @Override
     protected void onResume() {

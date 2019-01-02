@@ -34,6 +34,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.example.wnsvy.kakaocalorie.Adapter.KakaoSDKAdapter;
+import com.example.wnsvy.kakaocalorie.Interface.AsyncTaskEventListener;
 import com.example.wnsvy.kakaocalorie.Service.JsonPostAsyncTask;
 import com.example.wnsvy.kakaocalorie.Utils.Logger;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -391,13 +392,26 @@ public class GlobalApplication extends Application {
         String stepCount = sharedPreferences.getString("step", "");
         String distanceCount = sharedPreferences.getString("distance", "");
         String calorie = sharedPreferences.getString("calorie", "");
+        String restUrl = "http://192.168.0.29:3000/send-count";
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.accumulate("stepCount", stepCount);
             jsonObject.accumulate("distance", distanceCount);
             jsonObject.accumulate("calorie", calorie);
             jsonObject.accumulate("userEmail",  email);
-            JsonPostAsyncTask jsonPostAsyncTask =  new JsonPostAsyncTask("http://192.168.0.29:3000/send-count",jsonObject);
+            JsonPostAsyncTask jsonPostAsyncTask =  new JsonPostAsyncTask(restUrl, jsonObject
+                    , context
+                    , new AsyncTaskEventListener() {
+                @Override
+                public void onSuccess(Object object) {
+                    Logger.e("Success send to server." + restUrl);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Logger.e("Failed send to server." + restUrl);
+                }
+            });
             jsonPostAsyncTask.execute();
         } catch (JSONException e) {
             e.printStackTrace();

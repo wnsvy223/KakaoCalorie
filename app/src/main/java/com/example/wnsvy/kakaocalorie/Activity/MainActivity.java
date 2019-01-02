@@ -11,7 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.wnsvy.kakaocalorie.Interface.AsyncTaskEventListener;
 import com.example.wnsvy.kakaocalorie.R;
 import com.example.wnsvy.kakaocalorie.Service.JsonPostAsyncTask;
 import com.kakao.auth.AccessTokenCallback;
@@ -110,13 +112,13 @@ public class MainActivity extends AppCompatActivity {
                 long token = result.getId();
                 Log.d("토큰", String.valueOf(token));
                 UserAccount userAccount = result.getKakaoAccount();
-                handleScopeError(userAccount,url,id,token);
+                checkNeedScopes(userAccount,url,id,token);
             }
         });
 
     }
 
-    private void handleScopeError(UserAccount account,String url, String id, long token) {
+    private void checkNeedScopes(UserAccount account, String url, String id, long token) {
         OptionalBoolean hasEmail = account.hasEmail();
         if(hasEmail == OptionalBoolean.TRUE){
             email = account.getEmail();
@@ -147,11 +149,34 @@ public class MainActivity extends AppCompatActivity {
                             jsonObject.accumulate("userPhoto",  url);
                             jsonObject.accumulate("userEmail",  email);
                             jsonObject.accumulate("token",  token);
-                            //new JsonPostAsyncTask("http://192.168.35.67:3000/create-user",jsonObject).execute();
-                            new JsonPostAsyncTask("http://192.168.0.29:3000/create-user",jsonObject).execute();
+                            //new JsonPostAsyncTask("http://192.168.0.29:3000/create-user",jsonObject).execute();
+
+                            JsonPostAsyncTask jsonPostAsyncTask = new JsonPostAsyncTask(
+                                    "http://192.168.0.29:3000/create-user"
+                                    , jsonObject
+                                    ,getApplicationContext(), new AsyncTaskEventListener<String>() {
+                                @Override
+                                public void onSuccess(String result) {
+                                    Intent intent = new Intent(MainActivity.this, UserDataActivity.class);
+                                    intent.putExtra("profileImage",url);
+                                    intent.putExtra("id",id);
+                                    intent.putExtra("email",email);
+                                    intent.putExtra("token",token);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent);
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Toast.makeText(getApplicationContext(),"서버응답실패",Toast.LENGTH_SHORT).show();
+                                    Session.getCurrentSession().removeCallback(callback);
+                                }
+                            });
+                            jsonPostAsyncTask.execute();
+
                             // 유저 테이블 생성 및 로그인 관련 노드서버와 통신
                             // 통신에 필요한 url과 데이터값을 JsonObject 만들어 생성자에 넘겨줌.
-
+                            /*
                             Intent intent = new Intent(MainActivity.this, UserDataActivity.class);
                             intent.putExtra("profileImage",url);
                             intent.putExtra("id",id);
@@ -159,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra("token",token);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
-
+                            */
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

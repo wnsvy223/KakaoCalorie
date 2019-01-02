@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.wnsvy.kakaocalorie.Interface.AsyncTaskEventListener;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -24,10 +26,15 @@ public class JsonPostAsyncTask extends AsyncTask<String,String,String> {
 
     private String restUrl;
     private JSONObject jsonObj;
+    private AsyncTaskEventListener<String> callback;
+    private Context context;
+    public Exception mException;
 
-    public JsonPostAsyncTask(String restUrl, JSONObject jsonObj) {
+    public JsonPostAsyncTask(String restUrl, JSONObject jsonObj, Context context, AsyncTaskEventListener callback) {
         this.restUrl = restUrl;   // 생성자로 넘겨받은 url에 따라 기능이 분류되므로 백그라운드 작업 메소드에서 url에 따라 분기처리
         this.jsonObj = jsonObj; // 생성자로 넘겨받은 jsonObject 데이터 -> 기능별 url에 따라 넘어오는 데이터들 분기
+        this.context = context;
+        this.callback = callback;
     }
 
     @Override
@@ -78,8 +85,10 @@ public class JsonPostAsyncTask extends AsyncTask<String,String,String> {
 
             } catch (MalformedURLException e){
                 e.printStackTrace();
+                mException = e;
             } catch (IOException e) {
                 e.printStackTrace();
+                mException = e;
             } finally {
                 if(con != null){
                     con.disconnect();
@@ -90,10 +99,12 @@ public class JsonPostAsyncTask extends AsyncTask<String,String,String> {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    mException = e;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
+            mException = e;
         }
 
         return null;
@@ -102,9 +113,15 @@ public class JsonPostAsyncTask extends AsyncTask<String,String,String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        if(result != null) {
-            Log.d("서버 응답 메시지", result);
+        if(callback != null) {
+            if (result != null) {
+                if (mException == null) {
+                    callback.onSuccess(result);
+                    Log.d("서버 응답 메시지", result);
+                } else {
+                    callback.onFailure(mException);
+                }
+            }
         }
-
     }
 }
