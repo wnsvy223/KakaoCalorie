@@ -49,22 +49,17 @@ import com.kakao.network.ErrorResult;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 import tk.jamun.elements.circularimageview.CircularImageView;
 
 
 
 public class UserDataActivity extends AppCompatActivity{
 
-    public static final String TAG = "BasicHistoryApi";
     private static final int REQUEST_OAUTH_REQUEST_CODE = 1;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 2;
     private GoogleApiClient mGoogleApiClient;
@@ -83,8 +78,7 @@ public class UserDataActivity extends AppCompatActivity{
     public ImageButton distanceLog;
     public ImageButton calorieLog;
     public ImageButton stepLog;
-    private FragmentManager fragmentManager;
-    private RankFragment rankFragment;
+    private JsonPostAsyncTask jsonPostAsyncTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,7 +199,7 @@ public class UserDataActivity extends AppCompatActivity{
                             long token = list.get(i).getId();
                             tokenList.add(token);
                         }
-                        getRank(tokenList);
+                        getRank(tokenList); // 카카오 친구 API로부터 받아온 친구들의 토큰값 리스트를 서버로 전송하여 해당 토큰을 가진 유저의 데이터를 받아옴
                     }
                 });
     }
@@ -215,14 +209,14 @@ public class UserDataActivity extends AppCompatActivity{
         JSONObject jsonObject = new JSONObject();
         String restUrl = "http://192.168.0.29:3000/show-rank";
         try {
-            jsonObject.accumulate("friendTokenList", token);
-            JsonPostAsyncTask jsonPostAsyncTask = new JsonPostAsyncTask(restUrl, jsonObject
+            jsonObject.accumulate("friendTokenList", token); // 서버로 보낼 친구들 토큰 리스트
+            jsonPostAsyncTask = new JsonPostAsyncTask(restUrl, jsonObject
                     , getApplicationContext(), new AsyncTaskEventListener<String>() {
                 @Override
                 public void onSuccess(String res) {
                     Log.d("제이슨", String.valueOf(res));
                     try {
-                        JSONArray jsonArray = new JSONArray(res);
+                        JSONArray jsonArray = new JSONArray(res);  // 서버로 부터 받아온 친구들의 정렬된 데이터 Json배열.
                         ArrayList<RankModel> rankList = new ArrayList<>();
                         for(int i=0; i<jsonArray.length(); i++){ // 생성된 jsonArray를 순회하며 각 키값에 접근하여 데이터를 가져옴.
                             JSONObject object = jsonArray.getJSONObject(i);
@@ -240,7 +234,7 @@ public class UserDataActivity extends AppCompatActivity{
                         Bundle bundle = new Bundle(1);
                         bundle.putParcelableArrayList("friendProfile",rankList);
                         rankFragment.setArguments(bundle);
-                        rankFragment.show(fragmentManager,"TV_tag");
+                        rankFragment.show(fragmentManager,"Rank");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -252,36 +246,6 @@ public class UserDataActivity extends AppCompatActivity{
                 }
             });
             jsonPostAsyncTask.execute();
-
-            /*
-            try {
-                String res = jsonPostAsyncTask.execute().get();
-                Log.d("제이슨", String.valueOf(res));
-                JSONArray jsonArray = new JSONArray(res);
-                ArrayList<RankModel> rankList = new ArrayList<>();
-                for(int i=0; i<jsonArray.length(); i++){ // 생성된 jsonArray를 순회하며 각 키값에 접근하여 데이터를 가져옴.
-                    JSONObject object = jsonArray.getJSONObject(i);
-                    String id = object.getString("userID");
-                    String email = object.getString("userEmail");
-                    String photo = object.getString("userPhoto");
-                    String footstep = object.getString("footstep");
-                    String distance = object.getString("distance");
-                    RankModel rankModel = new RankModel(id,email,photo,footstep,distance);
-                    rankList.add(rankModel);
-                }
-                FragmentManager fragmentManager = getFragmentManager();
-                RankFragment rankFragment = new RankFragment();
-                rankFragment.setStyle(DialogFragment.STYLE_NORMAL,R.style.CustomDialog);
-                Bundle bundle = new Bundle(1);
-                bundle.putParcelableArrayList("friendProfile",rankList);
-                rankFragment.setArguments(bundle);
-                rankFragment.show(fragmentManager,"TV_tag");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-            */
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -293,6 +257,12 @@ public class UserDataActivity extends AppCompatActivity{
     protected void onResume() {
         super.onResume();
         scheduleJob(); // 잡서비스 설정 및 구동
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
     }
 
     public void initView(){

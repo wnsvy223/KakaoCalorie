@@ -457,4 +457,5 @@ public class GlobalApplication extends Application {
             Logger.d("successfully created a notification channel.");
         }
     }
+
 }

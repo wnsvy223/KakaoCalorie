@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.wnsvy.kakaocalorie.Application.GlobalApplication;
 import com.example.wnsvy.kakaocalorie.Interface.AsyncTaskEventListener;
 import com.example.wnsvy.kakaocalorie.R;
 import com.example.wnsvy.kakaocalorie.Service.JsonPostAsyncTask;
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private ISessionCallback callback;
     private static String TAG = "KAKAO_TAG";
     private String email;
-
+    private JsonPostAsyncTask jsonPostAsyncTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,34 +151,26 @@ public class MainActivity extends AppCompatActivity {
                             jsonObject.accumulate("userPhoto",  url);
                             jsonObject.accumulate("userEmail",  email);
                             jsonObject.accumulate("token",  token);
-                            //new JsonPostAsyncTask("http://192.168.0.29:3000/create-user",jsonObject).execute();
 
-                            JsonPostAsyncTask jsonPostAsyncTask = new JsonPostAsyncTask(
+                            // 유저 테이블 생성 및 로그인 관련 노드서버와 통신
+                            // 통신에 필요한 url과 데이터값을 JsonObject 만들어 생성자에 넘겨줌.
+                            jsonPostAsyncTask = new JsonPostAsyncTask(
                                     "http://192.168.0.29:3000/create-user"
                                     , jsonObject
                                     ,getApplicationContext(), new AsyncTaskEventListener<String>() {
                                 @Override
                                 public void onSuccess(String result) {
-                                    Intent intent = new Intent(MainActivity.this, UserDataActivity.class);
-                                    intent.putExtra("profileImage",url);
-                                    intent.putExtra("id",id);
-                                    intent.putExtra("email",email);
-                                    intent.putExtra("token",token);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    startActivity(intent);
+                                    Log.d("AsyncTaskCallBack","success" + result);
                                 }
 
                                 @Override
                                 public void onFailure(Exception e) {
-                                    Toast.makeText(getApplicationContext(),"서버응답실패",Toast.LENGTH_SHORT).show();
                                     Session.getCurrentSession().removeCallback(callback);
+                                    Log.d("AsyncTaskCallBack","fail"+ e);
                                 }
                             });
                             jsonPostAsyncTask.execute();
 
-                            // 유저 테이블 생성 및 로그인 관련 노드서버와 통신
-                            // 통신에 필요한 url과 데이터값을 JsonObject 만들어 생성자에 넘겨줌.
-                            /*
                             Intent intent = new Intent(MainActivity.this, UserDataActivity.class);
                             intent.putExtra("profileImage",url);
                             intent.putExtra("id",id);
@@ -184,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra("token",token);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
-                            */
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -223,5 +216,6 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
     }
+
 
 }

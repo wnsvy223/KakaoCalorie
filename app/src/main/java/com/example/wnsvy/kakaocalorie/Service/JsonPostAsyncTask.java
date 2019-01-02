@@ -1,9 +1,10 @@
 package com.example.wnsvy.kakaocalorie.Service;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.wnsvy.kakaocalorie.Interface.AsyncTaskEventListener;
 
@@ -18,6 +19,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 
 
@@ -50,15 +52,14 @@ public class JsonPostAsyncTask extends AsyncTask<String,String,String> {
 
             try{
                 URL url = new URL(restUrl);
-                //URL url = new URL(urls[0]);
-                //연결을 함
                 con = (HttpURLConnection) url.openConnection();
-                con.setRequestMethod("POST");//POST방식으로 보냄
-                con.setRequestProperty("Cache-Control", "no-cache");//캐시 설정
-                con.setRequestProperty("Content-Type", "application/json");//application JSON 형식으로 전송
+                con.setRequestMethod("POST"); //POST방식으로 보냄
+                con.setRequestProperty("Cache-Control", "no-cache"); //캐시 설정
+                con.setRequestProperty("Content-Type", "application/json"); //application JSON 형식으로 전송
                 con.setRequestProperty("Accept", "text/html");//서버에 response 데이터를 html로 받음
-                con.setDoOutput(true);//Outstream으로 post 데이터를 넘겨  주겠다는 의미
-                con.setDoInput(true);//Inputstream으로 서버로부터 응답을 받겠다는 의미
+                con.setDoOutput(true); //Outstream으로 post 데이터를 넘겨  주겠다는 의미
+                con.setDoInput(true); //Inputstream으로 서버로부터 응답을 받겠다는 의미
+                con.setConnectTimeout(5000); //타임아웃 5초
                 con.connect();
 
                 //서버로 보내기위해서 스트림 만듬
@@ -82,11 +83,16 @@ public class JsonPostAsyncTask extends AsyncTask<String,String,String> {
                 }
 
                 return buffer.toString();//서버로 부터 받은 값을 리턴해줌 아마 OK!!가 들어올것임
-
+            } catch (SocketTimeoutException e) {
+                exceptionHandleToast(e);
+                e.printStackTrace();
+                mException = e;
             } catch (MalformedURLException e){
+                exceptionHandleToast(e);
                 e.printStackTrace();
                 mException = e;
             } catch (IOException e) {
+                exceptionHandleToast(e);
                 e.printStackTrace();
                 mException = e;
             } finally {
@@ -98,6 +104,7 @@ public class JsonPostAsyncTask extends AsyncTask<String,String,String> {
                         reader.close();//버퍼를 닫아줌
                     }
                 } catch (IOException e) {
+                    exceptionHandleToast(e);
                     e.printStackTrace();
                     mException = e;
                 }
@@ -123,5 +130,14 @@ public class JsonPostAsyncTask extends AsyncTask<String,String,String> {
                 }
             }
         }
+    }
+
+    private void exceptionHandleToast(Exception e){
+        Handler handler = new Handler(context.getMainLooper());
+        handler.post( new Runnable(){
+            public void run(){
+                Toast.makeText(context, "서버 연결 실패" + "(Exception : "+e+")",Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
