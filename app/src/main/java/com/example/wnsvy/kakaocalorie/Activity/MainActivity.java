@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private static String TAG = "KAKAO_TAG";
     private String email;
     private JsonPostAsyncTask jsonPostAsyncTask;
-    public ImageButton customKakaoLogin;
+    public Button customKakaoLogin;
     public LoginButton loginButton;
 
     @Override
@@ -57,6 +57,19 @@ public class MainActivity extends AppCompatActivity {
 
         mContext = getApplicationContext();
         getHashKey(mContext); // 카카오 API 연동시 필요한 해시키값 생성
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         callback = new ISessionCallback() {
             @Override
@@ -89,24 +102,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         Session.getCurrentSession().removeCallback(callback);
@@ -116,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
         UserManagement.getInstance().me(new MeV2ResponseCallback() {
             @Override
             public void onSessionClosed(ErrorResult errorResult) {
-                //Toast.makeText(getApplicationContext(),"카카오 세션 Close!.",Toast.LENGTH_SHORT).show();
                 Log.d(TAG,"카카오 세션 Close!");
             }
 
