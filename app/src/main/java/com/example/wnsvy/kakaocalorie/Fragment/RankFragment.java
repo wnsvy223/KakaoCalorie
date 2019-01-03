@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.wnsvy.kakaocalorie.Adapter.RnakAdapter;
+import com.example.wnsvy.kakaocalorie.Adapter.RankListAdapter;
 import com.example.wnsvy.kakaocalorie.Model.RankModel;
 import com.example.wnsvy.kakaocalorie.R;
 
@@ -23,7 +23,7 @@ public class RankFragment extends DialogFragment {
 
     public ArrayList<RankModel> rankModelArrayList;
     RecyclerView rv;
-    RnakAdapter adapter;
+    RankListAdapter adapter;
 
     @Nullable
     @Override
@@ -38,7 +38,7 @@ public class RankFragment extends DialogFragment {
         rankModelArrayList = getArguments().getParcelableArrayList("friendProfile");
 
         //ADAPTER
-        adapter=new RnakAdapter(this.getActivity(),rankModelArrayList);
+        adapter=new RankListAdapter(this.getActivity(),rankModelArrayList);
         rv.setAdapter(adapter);
 
         getDialog().setTitle("오늘의 걷기왕");

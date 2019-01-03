@@ -12,6 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.wnsvy.kakaocalorie.Application.GlobalApplication;
@@ -23,6 +26,7 @@ import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.Session;
 import com.kakao.auth.authorization.accesstoken.AccessToken;
 import com.kakao.network.ErrorResult;
+import com.kakao.usermgmt.LoginButton;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.MeV2ResponseCallback;
 import com.kakao.usermgmt.response.MeV2Response;
@@ -43,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     private static String TAG = "KAKAO_TAG";
     private String email;
     private JsonPostAsyncTask jsonPostAsyncTask;
+    public ImageButton customKakaoLogin;
+    public LoginButton loginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,11 +75,18 @@ public class MainActivity extends AppCompatActivity {
 
         if(!Session.getCurrentSession().checkAndImplicitOpen()){
             setContentView(R.layout.activity_main); // 세션이 유지된 상태가 아니면 메인 액티비티 화면 세팅
+            customKakaoLogin = findViewById(R.id.buttonkakao);
+            loginButton = findViewById(R.id.btn_kakao_login);
+            customKakaoLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    loginButton.performClick();
+                }
+            });
         }else{
             goToLoginActivity(); // 세션이 유지된 상태면 다음 액티비티 이동
         }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

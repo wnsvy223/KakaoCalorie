@@ -17,12 +17,12 @@ import java.util.ArrayList;
 /**
  * Created by Oclemmy on 4/23/2016 for ProgrammingWizards Channel.
  */
-public class RnakAdapter extends RecyclerView.Adapter<RankHolder> {
+public class RankListAdapter extends RecyclerView.Adapter<RankHolder> {
 
     Context context;
     ArrayList<RankModel> rankList;
 
-    public RnakAdapter(Context context, ArrayList<RankModel> rankList) {
+    public RankListAdapter(Context context, ArrayList<RankModel> rankList) {
         this.context = context;
         this.rankList = rankList;
     }
