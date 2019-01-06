@@ -63,7 +63,7 @@ public class UserDataActivity extends AppCompatActivity{
     private static final int REQUEST_OAUTH_REQUEST_CODE = 1;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 2;
     private GoogleApiClient mGoogleApiClient;
-    private CircularProgressBar circularProgressBar;
+    private CircularProgressBar footstepProgressBar;
     private CircularProgressBar distanceProgressBar;
     private CircularProgressBar calorieProgressBar;
     public Toolbar toolbar;
@@ -75,6 +75,9 @@ public class UserDataActivity extends AppCompatActivity{
     public TextView distance;
     public TextView stepCount;
     public TextView calorie;
+    public TextView distanceTag;
+    public TextView stepTag;
+    public TextView calTag;
     public ImageButton distanceLog;
     public ImageButton calorieLog;
     public ImageButton stepLog;
@@ -138,7 +141,7 @@ public class UserDataActivity extends AppCompatActivity{
         if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this), fitnessOptions)) {
             GoogleSignIn.requestPermissions(this, REQUEST_OAUTH_REQUEST_CODE, GoogleSignIn.getLastSignedInAccount(this), fitnessOptions);
         } else {
-            GlobalApplication.getGlobalApplicationContext().readHIstoryData(circularProgressBar,stepCount,distanceProgressBar,distance,calorieProgressBar,calorie,"display");
+            GlobalApplication.getGlobalApplicationContext().readHIstoryData(footstepProgressBar,stepCount,distanceProgressBar,distance,calorieProgressBar,calorie,"display");
             GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_STEP_COUNT_DELTA);
             GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_DISTANCE_DELTA);
             GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_CALORIES_EXPENDED);
@@ -269,7 +272,7 @@ public class UserDataActivity extends AppCompatActivity{
         toolbar = findViewById(R.id.toolbar);
         profileImgae = findViewById(R.id.profileImage);
         textId = findViewById(R.id.textId);
-        circularProgressBar = findViewById(R.id.circularProgressbar);
+        footstepProgressBar = findViewById(R.id.circularProgressbar);
         distanceProgressBar = findViewById(R.id.distanceProgress);
         calorieProgressBar = findViewById(R.id.calorieProgress);
         textEmail = findViewById(R.id.textEmail);
@@ -279,13 +282,16 @@ public class UserDataActivity extends AppCompatActivity{
         distanceLog = findViewById(R.id.distancelog);
         calorieLog = findViewById(R.id.calorielog);
         stepLog = findViewById(R.id.steplog);
+        calTag = findViewById(R.id.calTag);
+        distanceTag = findViewById(R.id.distanceTag);
+        stepTag = findViewById(R.id.stepTag);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_OAUTH_REQUEST_CODE) {
-                GlobalApplication.getGlobalApplicationContext().readHIstoryData(circularProgressBar,stepCount,distanceProgressBar,distance,calorieProgressBar,calorie,"distplay");
+                GlobalApplication.getGlobalApplicationContext().readHIstoryData(footstepProgressBar,stepCount,distanceProgressBar,distance,calorieProgressBar,calorie,"distplay");
                 GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_STEP_COUNT_DELTA);
                 GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_DISTANCE_DELTA);
                 GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_CALORIES_EXPENDED);

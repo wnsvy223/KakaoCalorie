@@ -286,7 +286,7 @@ public class GlobalApplication extends Application {
                 Log.i(TAG, "List size: " + dataSets);
                 for (DataSet dataSet : dataSets) {
                     if(tag.equals("display")){
-                        showFitnessData(dataSet, context, distance, distanceProgressBar,stepCount,stepProgressBar,calorie,calorieProgressBar);
+                        showFitnessData(dataSet, distance, distanceProgressBar,stepCount,stepProgressBar,calorie,calorieProgressBar);
                     }else{
                         uploadDistance(dataSet,context);
                     }
@@ -296,7 +296,7 @@ public class GlobalApplication extends Application {
             Log.i(TAG, "Number of returned DataSets is: " + dataReadResult.getDataSets().size());
             for (DataSet dataSet : dataReadResult.getDataSets()) {
                 if(tag.equals("display")){
-                    showFitnessData(dataSet, context, distance, distanceProgressBar,stepCount,stepProgressBar,calorie,calorieProgressBar);
+                    showFitnessData(dataSet, distance, distanceProgressBar,stepCount,stepProgressBar,calorie,calorieProgressBar);
                 }else{
                     uploadDistance(dataSet,context);
                 }
@@ -305,7 +305,7 @@ public class GlobalApplication extends Application {
         // [END parse_read_data_result]
     }
 
-    public static void showFitnessData(DataSet dataSet, Context context, TextView distance, CircularProgressBar distanceProgressBar, TextView stepCount, CircularProgressBar stepProgressBar,TextView calorie, CircularProgressBar calorieProgressBar){
+    public static void showFitnessData(DataSet dataSet, TextView distance, CircularProgressBar distanceProgressBar, TextView stepCount, CircularProgressBar stepProgressBar,TextView calorie, CircularProgressBar calorieProgressBar){
         DateFormat timeFormat = DateFormat.getTimeInstance();
         DateFormat dateFormat = DateFormat.getDateInstance();
         for (DataPoint dp : dataSet.getDataPoints()) {
@@ -320,7 +320,7 @@ public class GlobalApplication extends Application {
                         String percent = dp.getValue(field).toString();
                         float result = Float.parseFloat(percent);
                         float distanceValue = result / 1000;
-                        String formatDistance = String.format("%8.1f", distanceValue) +" " + "Km";
+                        String formatDistance = String.format("%8.1f", distanceValue);
                         distance.setText(formatDistance);
                         distanceProgressBar.setProgressMax(10000);
                         distanceProgressBar.setProgressWithAnimation(result, 500); // 구글핏으로 부터 받은 거리 값 세팅
@@ -330,12 +330,12 @@ public class GlobalApplication extends Application {
                         int resultStep = Integer.parseInt(percentStep);
                         stepProgressBar.setProgressMax(10000); // 프로그래스바 최대값
                         stepProgressBar.setProgressWithAnimation(resultStep, 500); // 구글핏으로 부터 받은 걸음걸이 값 세팅
-                        stepCount.setText(percentStep +" " + "Step");
+                        stepCount.setText(percentStep);
                         break;
                     case "calories":
                         String percentCal = dp.getValue(field).toString();
-                        float resultCal = Float.parseFloat(percentCal);
-                        String formatCal = String.format("%8.1f", resultCal) +" " +"Cal";
+                        int resultCal = (int) Float.parseFloat(percentCal);
+                        String formatCal = String.format(String.valueOf(resultCal));
                         calorieProgressBar.setProgressMax(100000);
                         calorieProgressBar.setProgressWithAnimation(resultCal, 500);
                         calorie.setText(formatCal);
