@@ -42,8 +42,9 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="top|center"
-        android:layout_marginTop="179dp" />
-
+        android:layout_marginTop="179dp"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
+        <!-- API 21 이상부터 제공되는 Material Design ripple effect 클릭시 영역이 물결모양으로 퍼지는 효과-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -75,12 +76,14 @@
                     app:cpb_progressbar_color="#00d5fa"
                     app:cpb_progressbar_width="7dp" />
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/distancelog"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_centerInParent="true"
-                    android:background="@drawable/icon_walk_step" />
+                    android:src="@drawable/icon_walk_step"
+                    android:background="?attr/selectableItemBackgroundBorderless"/>
+
             </RelativeLayout>
 
             <LinearLayout
@@ -133,12 +136,14 @@
                     app:cpb_progressbar_color="#4cf958"
                     app:cpb_progressbar_width="7dp" />
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/steplog"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_centerInParent="true"
-                    android:background="@drawable/icon_foot" />
+                    android:src="@drawable/icon_foot"
+                    android:background="?attr/selectableItemBackgroundBorderless"/>
+
             </RelativeLayout>
 
             <LinearLayout
@@ -190,12 +195,14 @@
                     app:cpb_progressbar_color="#fad000"
                     app:cpb_progressbar_width="7dp" />
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/calorielog"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_centerInParent="true"
-                    android:background="@drawable/icon_calorie" />
+                    android:src="@drawable/icon_calorie"
+                    android:background="?attr/selectableItemBackgroundBorderless"/>
+
             </RelativeLayout>
 
             <LinearLayout

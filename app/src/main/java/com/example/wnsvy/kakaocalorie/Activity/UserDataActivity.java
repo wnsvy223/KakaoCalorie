@@ -6,6 +6,8 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,8 +15,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,10 +82,9 @@ public class UserDataActivity extends AppCompatActivity{
     public TextView distanceTag;
     public TextView stepTag;
     public TextView calTag;
-    public ImageButton distanceLog;
-    public ImageButton calorieLog;
-    public ImageButton stepLog;
-    private JsonPostAsyncTask jsonPostAsyncTask;
+    public ImageView distanceLog;
+    public ImageView calorieLog;
+    public ImageView stepLog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +97,7 @@ public class UserDataActivity extends AppCompatActivity{
         //mDispatcher.cancel(JOB_TAG); // 모든 예약된 Job 취소
 
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.baseline_keyboard_arrow_left_black_18dp);
+        toolbar.setNavigationIcon(R.drawable.ic_navigate_before_black_40dp);
         toolbar.setBackgroundColor(ContextCompat.getColor(this,R.color.color6));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +115,7 @@ public class UserDataActivity extends AppCompatActivity{
         textId.setText(id);
         textEmail.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.color6));
         textEmail.setText(email);
+
 
         stepLog.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,7 +217,7 @@ public class UserDataActivity extends AppCompatActivity{
         String restUrl = "http://192.168.0.29:3000/show-rank";
         try {
             jsonObject.accumulate("friendTokenList", token); // 서버로 보낼 친구들 토큰 리스트
-            jsonPostAsyncTask = new JsonPostAsyncTask(restUrl, jsonObject
+            JsonPostAsyncTask jsonPostAsyncTask = new JsonPostAsyncTask(restUrl, jsonObject
                     , getApplicationContext(), new AsyncTaskEventListener<String>() {
                 @Override
                 public void onSuccess(String res) {
