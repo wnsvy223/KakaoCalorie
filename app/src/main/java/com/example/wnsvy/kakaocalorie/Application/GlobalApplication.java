@@ -319,10 +319,9 @@ public class GlobalApplication extends Application {
                     case "distance":
                         String percent = dp.getValue(field).toString();
                         float result = Float.parseFloat(percent);
-                        float distanceValue = result / 1000;
-                        String formatDistance = String.format("%8.1f", distanceValue);
-                        distance.setText(formatDistance);
-                        distanceProgressBar.setProgressMax(10000);
+                        String form = String.valueOf(Math.round(result) / 1000.0);
+                        distance.setText(form);
+                         distanceProgressBar.setProgressMax(10000);
                         distanceProgressBar.setProgressWithAnimation(result, 500); // 구글핏으로 부터 받은 거리 값 세팅
                         break;
                     case "steps":
@@ -337,7 +336,7 @@ public class GlobalApplication extends Application {
                         int resultCal = (int) Float.parseFloat(percentCal);
                         String formatCal = String.format(String.valueOf(resultCal));
                         calorieProgressBar.setProgressMax(100000);
-                        calorieProgressBar.setProgressWithAnimation(resultCal, 500);
+                        calorieProgressBar.setProgressWithAnimation(resultCal, 500); // 구글핏으로 부터 받은 칼로리 소모값 세팅
                         calorie.setText(formatCal);
                     default:
                 }
