@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -111,7 +112,11 @@ public class UserDataActivity extends AppCompatActivity{
         String id = intent.getStringExtra("id");
         String imageUrl = intent.getStringExtra("profileImage");
 
-        Glide.with(getApplicationContext()).load(imageUrl).apply(new RequestOptions().override(200,200)).into(profileImgae);
+        if(TextUtils.isEmpty(imageUrl)){
+            Glide.with(getApplicationContext()).load(R.drawable.foot_prints).apply(new RequestOptions().override(200,200)).into(profileImgae);
+        }else{
+            Glide.with(getApplicationContext()).load(imageUrl).apply(new RequestOptions().override(200,200)).into(profileImgae);
+        }
         textId.setText(id);
         textEmail.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.color6));
         textEmail.setText(email);
