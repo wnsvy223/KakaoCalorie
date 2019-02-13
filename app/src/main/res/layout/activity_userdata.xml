@@ -235,4 +235,32 @@
 
     </LinearLayout>
 
+    <com.example.wnsvy.kakaocalorie.Utils.SemiCircleProgress
+        android:id="@+id/semiCircle"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignTop="@+id/profileImage"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="106dp"
+        android:layout_marginEnd="-82dp"
+        android:layout_toStartOf="@+id/profileImage"
+        android:rotation="-90"
+        app:colorBack="@color/color2"
+        app:colorFront="@color/color10" />
+
+    <com.example.wnsvy.kakaocalorie.Utils.SemiCircleProgress
+        android:id="@+id/semiCircle2"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignTop="@+id/profileImage"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="106dp"
+        android:layout_marginEnd="-82dp"
+        android:layout_toStartOf="@+id/profileImage"
+        android:rotation="90"
+        android:rotationX="180"
+        app:colorBack="@color/color2"
+        app:colorFront="@color/color9" />
+       <!-- rotaionX를 이용해 좌우반전을 하여 프로그래스바를 두 영역으로 나눠 사용-->
+
 </RelativeLayout>

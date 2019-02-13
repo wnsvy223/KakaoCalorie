@@ -45,7 +45,7 @@
 
         <activity
             android:name=".Activity.LogActivity"
-            android:label="@string/title_activity_log"></activity>
+            android:label="@string/title_activity_log" />
     </application>
 
 </manifest>

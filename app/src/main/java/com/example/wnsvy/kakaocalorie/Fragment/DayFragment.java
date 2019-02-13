@@ -197,12 +197,12 @@ public class DayFragment extends Fragment {
 
     private ArrayList<BarDataSet> makeBarData( ArrayList<Float> value, ArrayList<Integer> position, String dataType){
         ArrayList<BarDataSet> dataSets = null;
-        ArrayList<BarEntry> valueSet2 = new ArrayList<>();
+        ArrayList<BarEntry> valueSet = new ArrayList<>();
         for(int i=0; i<value.size(); i++){
             BarEntry v2e1 = new BarEntry(value.get(i), position.get(i));
-            valueSet2.add(v2e1);
+            valueSet.add(v2e1);
         }
-        BarDataSet barDataSet = new BarDataSet(valueSet2, dataType);
+        BarDataSet barDataSet = new BarDataSet(valueSet, dataType);
         switch (dataType){
             case "distance":
                 barDataSet.setColor(ContextCompat.getColor(getContext(),R.color.distance));

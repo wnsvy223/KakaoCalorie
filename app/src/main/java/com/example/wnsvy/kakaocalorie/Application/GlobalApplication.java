@@ -29,6 +29,7 @@ import android.support.v4.util.LruCache;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -135,11 +136,15 @@ public class GlobalApplication extends Application {
                 .addDataType(DataType.TYPE_CALORIES_EXPENDED, FitnessOptions.ACCESS_READ)
                 .addDataType(DataType.AGGREGATE_CALORIES_EXPENDED, FitnessOptions.ACCESS_READ)
                 .addDataType(DataType.TYPE_CALORIES_EXPENDED, FitnessOptions.ACCESS_WRITE)
-                .addDataType(DataType.AGGREGATE_CALORIES_EXPENDED, FitnessOptions.ACCESS_WRITE) //  이동거리 옵션
+                .addDataType(DataType.AGGREGATE_CALORIES_EXPENDED, FitnessOptions.ACCESS_WRITE) //  칼로리 옵션
+                .addDataType(DataType.TYPE_LOCATION_SAMPLE, FitnessOptions.ACCESS_READ)
+                .addDataType(DataType.AGGREGATE_LOCATION_BOUNDING_BOX, FitnessOptions.ACCESS_READ)
+                .addDataType(DataType.TYPE_LOCATION_SAMPLE, FitnessOptions.ACCESS_WRITE)
+                .addDataType(DataType.AGGREGATE_LOCATION_BOUNDING_BOX, FitnessOptions.ACCESS_WRITE) //  이동 위치 추적 옵션
                 .build();
     }
 
-
+    /*
     public Task<Void> resetData() {
         // Create a new dataset and update request.
         DataSet dataSet = updateFitnessData(); // 스탭카운트 0 으로 리셋
@@ -177,7 +182,9 @@ public class GlobalApplication extends Application {
                             }
                         });
     }
+    */
 
+    /*
     private DataSet updateFitnessData() {
         Log.i(TAG, "Creating a new data update request.");
 
@@ -214,6 +221,7 @@ public class GlobalApplication extends Application {
 
         return dataSet;
     }
+    */
 
     public void getFitnessRecord(DataType dataType) {
         // To create a subscription, invoke the Recording API. As soon as the subscription is
@@ -238,7 +246,7 @@ public class GlobalApplication extends Application {
         Date now = new Date();
         cal.setTime(now);
         long endTime = cal.getTimeInMillis();
-        //cal.add(Calendar.WEEK_OF_YEAR, -1); // 1주 전
+        //cal.add(Calendar.DAY_OF_WEEK, -1); // 1주 전
         //cal.add(Calendar.DATE, -1); // 1일 전
         cal.set(Calendar.HOUR_OF_DAY,0);
         cal.set(Calendar.MINUTE,0);
@@ -255,8 +263,11 @@ public class GlobalApplication extends Application {
                 .aggregate(DataType.TYPE_DISTANCE_DELTA, DataType.AGGREGATE_DISTANCE_DELTA)
                 .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
                 .aggregate(DataType.TYPE_CALORIES_EXPENDED, DataType.AGGREGATE_CALORIES_EXPENDED)
+                .aggregate(DataType.TYPE_SPEED, DataType.AGGREGATE_SPEED_SUMMARY)
+                .aggregate(DataType.TYPE_LOCATION_SAMPLE, DataType.AGGREGATE_LOCATION_BOUNDING_BOX)
                 .bucketByTime(1, TimeUnit.DAYS)
                 .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                .enableServerQueries()
                 .build();
 
         return readRequest;

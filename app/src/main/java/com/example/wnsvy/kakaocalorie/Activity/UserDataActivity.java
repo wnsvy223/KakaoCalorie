@@ -3,9 +3,12 @@ package com.example.wnsvy.kakaocalorie.Activity;
 import android.Manifest;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,15 +34,37 @@ import com.example.wnsvy.kakaocalorie.Service.UpdateDbService;
 import com.example.wnsvy.kakaocalorie.Utils.JobDispatcherUtils;
 import com.example.wnsvy.kakaocalorie.Utils.Logger;
 import com.example.wnsvy.kakaocalorie.Utils.PermissionUtils;
+import com.example.wnsvy.kakaocalorie.Utils.SemiCircleProgress;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
 import com.firebase.jobdispatcher.Job;
 import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.RetryStrategy;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.FitnessOptions;
+import com.google.android.gms.fitness.data.Bucket;
+import com.google.android.gms.fitness.data.DataPoint;
+import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.data.Subscription;
+import com.google.android.gms.fitness.data.Value;
+import com.google.android.gms.fitness.request.DataReadRequest;
+import com.google.android.gms.fitness.request.DataSourcesRequest;
+import com.google.android.gms.fitness.request.OnDataPointListener;
+import com.google.android.gms.fitness.request.SensorRequest;
+import com.google.android.gms.fitness.result.DataReadResponse;
+import com.google.android.gms.fitness.result.DataSourcesResult;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.kakao.auth.Session;
 import com.kakao.friends.AppFriendContext;
 import com.kakao.friends.response.AppFriendsResponse;
@@ -53,10 +78,17 @@ import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import tk.jamun.elements.circularimageview.CircularImageView;
 
+import static java.text.DateFormat.getDateInstance;
 
 
 public class UserDataActivity extends AppCompatActivity{
@@ -82,6 +114,9 @@ public class UserDataActivity extends AppCompatActivity{
     public ImageView distanceLog;
     public ImageView calorieLog;
     public ImageView stepLog;
+    public static final String TAG = "GoogleFit FootStep Test";
+    private OnDataPointListener mListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,13 +178,15 @@ public class UserDataActivity extends AppCompatActivity{
         });
 
         FitnessOptions fitnessOptions  = GlobalApplication.getGlobalApplicationContext().setFitnessOptions(); // 구글핏 클라이언트 옵션 세팅
-        if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this), fitnessOptions)) {
-            GoogleSignIn.requestPermissions(this, REQUEST_OAUTH_REQUEST_CODE, GoogleSignIn.getLastSignedInAccount(this), fitnessOptions);
+        if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(getApplicationContext()), fitnessOptions)) {
+            GoogleSignIn.requestPermissions(this, REQUEST_OAUTH_REQUEST_CODE, GoogleSignIn.getLastSignedInAccount(getApplicationContext()), fitnessOptions);
         } else {
-            GlobalApplication.getGlobalApplicationContext().readHIstoryData(footstepProgressBar,stepCount,distanceProgressBar,distance,calorieProgressBar,calorie,"display");
             GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_STEP_COUNT_DELTA);
             GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_DISTANCE_DELTA);
             GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_CALORIES_EXPENDED);
+            GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_LOCATION_SAMPLE);
+            GlobalApplication.getGlobalApplicationContext().readHIstoryData(footstepProgressBar,stepCount,distanceProgressBar,distance,calorieProgressBar,calorie,"display");
+            getSensorApi();
         }
 
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)
@@ -164,6 +201,80 @@ public class UserDataActivity extends AppCompatActivity{
                 requestFriends();
             }
         });
+
+        SemiCircleProgress semiCircleProgress = findViewById(R.id.semiCircle);
+        SemiCircleProgress semiCircleProgress2 = findViewById(R.id.semiCircle2);
+        semiCircleProgress.setProgressWithAnimation(2000,130);
+        semiCircleProgress2.setProgressWithAnimation(2000,80);
+        // progress는 180도 값이 max값. 따라서 max값이 10000일 경우를 비례식으로 계산하면 원하는 값일때 각 호의 progress값을 구할수있음
+    }
+
+    public void getSensorApi(){
+        Fitness.getSensorsClient(this, GoogleSignIn.getLastSignedInAccount(getApplicationContext()))
+                .findDataSources(
+                        new DataSourcesRequest.Builder()
+                                .setDataTypes(DataType.TYPE_LOCATION_SAMPLE)
+                                .setDataSourceTypes(DataSource.TYPE_RAW)
+                                .build())
+                .addOnSuccessListener(
+                        new OnSuccessListener<List<DataSource>>() {
+                            @Override
+                            public void onSuccess(List<DataSource> dataSources) {
+                                for (DataSource dataSource : dataSources) {
+                                    Log.i("Location", "Data source found: " + dataSource.toString());
+                                    Log.i("Location", "Data Source type: " + dataSource.getDataType().getName());
+
+                                    // Let's register a listener to receive Activity data!
+                                    if (dataSource.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)
+                                            && mListener == null) {
+                                        Log.i("Location", "Data source for LOCATION_SAMPLE found!  Registering.");
+                                        registerFitnessDataListener(dataSource, DataType.TYPE_LOCATION_SAMPLE);
+                                    }
+                                }
+                            }
+                        })
+                .addOnFailureListener(
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e(TAG, "failed", e);
+                            }
+                        });
+    }
+
+    private void registerFitnessDataListener(DataSource dataSource, DataType dataType) {
+        // [START register_data_listener]
+        mListener = new OnDataPointListener() {
+                    @Override
+                    public void onDataPoint(DataPoint dataPoint) {
+                        for (Field field : dataPoint.getDataType().getFields()) {
+                            Value val = dataPoint.getValue(field);
+                            Log.i("Location", "Detected DataPoint field: " + field.getName());
+                            Log.i("Location", "Detected DataPoint value: " + val);
+                        }
+                    }
+                };
+
+        Fitness.getSensorsClient(this, GoogleSignIn.getLastSignedInAccount(getApplicationContext()))
+                .add(
+                        new SensorRequest.Builder()
+                                .setDataSource(dataSource) // Optional but recommended for custom data sets.
+                                .setDataType(dataType) // Can't be omitted.
+                                .setSamplingRate(1, TimeUnit.SECONDS)
+                                .build(),
+                        mListener)
+                .addOnCompleteListener(
+                        new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.i("Location", "Listener registered!");
+                                } else {
+                                    Log.e("Location", "Listener not registered.", task.getException());
+                                }
+                            }
+                        });
+        // [END register_data_listener]
     }
 
     public void requestFriends() {
@@ -300,6 +411,7 @@ public class UserDataActivity extends AppCompatActivity{
                 GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_STEP_COUNT_DELTA);
                 GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_DISTANCE_DELTA);
                 GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_CALORIES_EXPENDED);
+                GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_LOCATION_SAMPLE);
             }
         }
     }
@@ -360,7 +472,8 @@ public class UserDataActivity extends AppCompatActivity{
             public void onCompleteLogout() {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
-                Session.getCurrentSession().close();
+                Session.getCurrentSession().close(); // 카카오 세션 닫기
+                Fitness.getConfigClient(getApplicationContext(), GoogleSignIn.getLastSignedInAccount(getApplicationContext())).disableFit(); // 구글핏 클라이언트 연결 해제
                 finish();
             }
         });

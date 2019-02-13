@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
             email = account.getEmail();
             Log.d("이메일",email);
         }
-        List<String> neededScopes = new ArrayList<>();
+        List<String> neededScopes = new ArrayList<>(); // 동의 화면에서 요청하는 추가 요구사항 항목 리스트
         if (account.needsScopeAccountEmail()) {
             neededScopes.add("account_email");
         }
