@@ -16,7 +16,9 @@ import com.example.wnsvy.kakaocalorie.Service.JsonPostAsyncTask;
 import com.example.wnsvy.kakaocalorie.Utils.Logger;
 import com.example.wnsvy.kakaocalorie.R;
 import com.kakao.friends.AppFriendContext;
+import com.kakao.friends.FriendContext;
 import com.kakao.friends.response.AppFriendsResponse;
+import com.kakao.friends.response.FriendsResponse;
 import com.kakao.friends.response.model.AppFriendInfo;
 import com.kakao.kakaotalk.callback.TalkResponseCallback;
 import com.kakao.kakaotalk.v2.KakaoTalkService;
@@ -54,6 +56,8 @@ public class FriendActivity extends AppCompatActivity implements IFriendListCall
         // offset = 0, limit = 100
         AppFriendContext appFriendContext = new AppFriendContext(true, 0, 100, "asc");
 
+        // requestAppFriends : 해당 앱에 가입된 카카오톡 친구 목록
+        // requestFriends : 카톡의 친구 목록
         KakaoTalkService.getInstance().requestAppFriends(appFriendContext,
                 new TalkResponseCallback<AppFriendsResponse>() {
                     @Override
