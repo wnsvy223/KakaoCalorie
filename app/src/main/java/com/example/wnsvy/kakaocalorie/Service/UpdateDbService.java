@@ -6,6 +6,7 @@ import com.example.wnsvy.kakaocalorie.Application.GlobalApplication;
 import com.example.wnsvy.kakaocalorie.Utils.Logger;
 import com.firebase.jobdispatcher.JobParameters;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import com.example.wnsvy.kakaocalorie.R;
@@ -24,12 +25,15 @@ public class UpdateDbService extends SimpleJobService{
         FitnessOptions fitnessOptions  = GlobalApplication.getGlobalApplicationContext().setFitnessOptions();
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("user",MODE_PRIVATE );
+        String email = sharedPreferences.getString("email", "");
 
         // 4시~5시 사이에 카운트 리셋 및 DB 업데이트
         if(hour > 22 && hour < 24){
             if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this), fitnessOptions)) {
                 sendNotification("KakaoCalorie", "오늘의 활동 정보 업데이트");
                 GlobalApplication.getGlobalApplicationContext().readHIstoryData(null,null,null,null,null,null,"upload");
+                GlobalApplication.getGlobalApplicationContext().sendServer(email,getApplicationContext());
                 // 거리 및 걸음수 Read && Upload
             }
         }

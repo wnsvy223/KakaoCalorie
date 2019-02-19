@@ -135,8 +135,7 @@ public class MainActivity extends AppCompatActivity {
         if (account.needsScopeGender()) {
             neededScopes.add("gender");
         }
-        Session.getCurrentSession().updateScopes(this, neededScopes, new
-                AccessTokenCallback() {
+        Session.getCurrentSession().updateScopes(this, neededScopes, new AccessTokenCallback() {
                     @Override
                     public void onAccessTokenReceived(AccessToken accessToken) {
                         // 유저에게 성공적으로 동의를 받음. 토큰을 재발급 받게 됨.
@@ -173,16 +172,17 @@ public class MainActivity extends AppCompatActivity {
                             });
                             jsonPostAsyncTask.execute();
 
-                            Intent intent = new Intent(MainActivity.this, UserDataActivity.class);
-                            intent.putExtra("profileImage",url);
-                            intent.putExtra("id",id);
-                            intent.putExtra("email",email);
-                            intent.putExtra("token",token);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
+                        Intent intent = new Intent(MainActivity.this, UserDataActivity.class);
+                        intent.putExtra("profileImage",url);
+                        intent.putExtra("id",id);
+                        intent.putExtra("email",email);
+                        intent.putExtra("token",token);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
 
                     }
 

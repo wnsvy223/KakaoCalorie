@@ -22,14 +22,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.util.LruCache;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -44,11 +42,9 @@ import com.google.android.gms.fitness.FitnessOptions;
 import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
-import com.google.android.gms.fitness.request.DataUpdateRequest;
 import com.google.android.gms.fitness.result.DataReadResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -58,7 +54,6 @@ import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -294,12 +289,12 @@ public class GlobalApplication extends Application {
             Log.i(TAG, "Number of returned buckets of DataSets is: " + dataReadResult.getBuckets().size());
             for (Bucket bucket : dataReadResult.getBuckets()) {
                 List<DataSet> dataSets = bucket.getDataSets();
-                Log.i(TAG, "List size: " + dataSets);
+                Log.i(TAG, "List size: " + dataSets.size());
                 for (DataSet dataSet : dataSets) {
                     if(tag.equals("display")){
                         showFitnessData(dataSet, distance, distanceProgressBar,stepCount,stepProgressBar,calorie,calorieProgressBar);
                     }else{
-                        uploadDistance(dataSet,context);
+                        uploadFitnessData(dataSet,context);
                     }
                 }
             }
@@ -309,7 +304,7 @@ public class GlobalApplication extends Application {
                 if(tag.equals("display")){
                     showFitnessData(dataSet, distance, distanceProgressBar,stepCount,stepProgressBar,calorie,calorieProgressBar);
                 }else{
-                    uploadDistance(dataSet,context);
+                    uploadFitnessData(dataSet,context);
                 }
             }
         }
@@ -332,7 +327,7 @@ public class GlobalApplication extends Application {
                         float result = Float.parseFloat(percent);
                         String form = String.valueOf(Math.round(result) / 1000.0);
                         distance.setText(form);
-                         distanceProgressBar.setProgressMax(10000);
+                        distanceProgressBar.setProgressMax(10000);
                         distanceProgressBar.setProgressWithAnimation(result, 500); // 구글핏으로 부터 받은 거리 값 세팅
                         break;
                     case "steps":
@@ -355,7 +350,7 @@ public class GlobalApplication extends Application {
         }
     }
 
-    private static void uploadDistance(DataSet dataSet, Context context){
+    private static void uploadFitnessData(DataSet dataSet, Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences("user",MODE_PRIVATE );
         String email = sharedPreferences.getString("email", "");
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -369,14 +364,14 @@ public class GlobalApplication extends Application {
             Log.i(TAG, "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
             for (Field field : dp.getDataType().getFields()) {
                 Log.i(TAG, "\tField: " + field.getName() + " Value: " + dp.getValue(field));
-
                 if(!TextUtils.isEmpty(email)) {
+                    // 서버에 업로드 메소드 sendServer에 사용될 데이터들을 sharedpreference에 저장.
                     switch (field.getName()){
                         case "distance":
                             String percent = dp.getValue(field).toString();
                             float result = Float.parseFloat(percent);
                             float distanceValue = result / 1000;
-                            String formatDistance = String.format("%8.1f", distanceValue) + "Km";
+                            String formatDistance = String.format("%8.1f", distanceValue).trim() + "Km"; // 소수점이동(%8.1f)후 공백제거(trim)
                             editor.putString("distance", formatDistance);
                             editor.apply();
                             break;
@@ -391,13 +386,12 @@ public class GlobalApplication extends Application {
                             editor.apply();
                         default:
                     }
-                    sendServer(email,context);
                 }
             }
         }
     }
 
-    private static void sendServer(String email,Context context){
+    public void sendServer(String email,Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences("user",MODE_PRIVATE );
         String stepCount = sharedPreferences.getString("step", "");
         String distanceCount = sharedPreferences.getString("distance", "");
@@ -414,12 +408,12 @@ public class GlobalApplication extends Application {
                     , new AsyncTaskEventListener() {
                 @Override
                 public void onSuccess(Object object) {
-                    Logger.e("Success send to server." + restUrl);
+                    Logger.e(TAG,"Success send to server." + restUrl);
                 }
 
                 @Override
                 public void onFailure(Exception e) {
-                    Logger.e("Failed send to server." + restUrl);
+                    Logger.e(TAG,"Failed send to server." + restUrl);
                 }
             });
             jsonPostAsyncTask.execute();
