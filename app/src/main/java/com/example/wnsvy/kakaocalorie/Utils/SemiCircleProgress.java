@@ -76,7 +76,7 @@ public class SemiCircleProgress extends View implements ValueAnimator.AnimatorUp
 
 
         //Set the thickness of our circle to 1/8 of the width
-        thickness = w /8;
+        thickness = w /10;
 
         //makes the current width available to our other methods
         width = w;

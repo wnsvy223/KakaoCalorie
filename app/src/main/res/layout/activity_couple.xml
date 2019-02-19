@@ -4,47 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:background="@color/backGround"
-    tools:context=".Activity.UserDataActivity">
+    tools:context=".Activity.CoupleActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.Toolbar>
-
-
-    <TextView
-        android:id="@+id/textId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="120dp"
-        android:gravity="center" />
-
-    <TextView
-        android:id="@+id/textEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="86dp"
-        android:gravity="center" />
-
-    <tk.jamun.elements.circularimageview.CircularImageView
-        android:id="@+id/profileImage"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:library_border_width="2dp"
-        app:library_border_color="#dcdcdc"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="top|center"
-        android:layout_marginTop="179dp"
-        android:background="?attr/selectableItemBackgroundBorderless"/>
-        <!-- API 21 이상부터 제공되는 Material Design ripple effect 클릭시 영역이 물결모양으로 퍼지는 효과-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -65,17 +26,33 @@
             android:weightSum="1">
 
             <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="80dp"
+                android:layout_height="80dp">
 
-                <com.mikhaellopez.circularprogressbar.CircularProgressBar
-                    android:id="@+id/distanceProgress"
+                <com.example.wnsvy.kakaocalorie.Utils.SemiCircleProgress
+                    android:id="@+id/semiCircleManDistance"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    app:cpb_background_progressbar_width="8dp"
-                    app:cpb_background_progressbar_color="@color/color2"
-                    app:cpb_progressbar_color="#00d5fa"
-                    app:cpb_progressbar_width="8dp" />
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="200dp"
+                    android:layout_marginEnd="-82dp"
+                    android:rotation="-270"
+                    app:colorBack="@color/color2"
+                    app:colorFront="@color/colorMan" />
+
+                <com.example.wnsvy.kakaocalorie.Utils.SemiCircleProgress
+                    android:id="@+id/semiCircleWomanDistance"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="200dp"
+                    android:layout_marginEnd="-82dp"
+                    android:rotation="270"
+                    android:rotationX="180"
+                    app:colorBack="@color/color2"
+                    app:colorFront="@color/colorWoman" />
+                <!-- rotaionX를 이용해 좌우반전을 하여 프로그래스바를 두 영역으로 나눠 사용-->
+
 
                 <ImageView
                     android:id="@+id/distancelog"
@@ -126,17 +103,31 @@
             android:weightSum="1">
 
             <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="80dp"
+                android:layout_height="80dp">
 
-                <com.mikhaellopez.circularprogressbar.CircularProgressBar
-                    android:id="@+id/circularProgressbar"
+                <com.example.wnsvy.kakaocalorie.Utils.SemiCircleProgress
+                    android:id="@+id/semiCircleManStep"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    app:cpb_background_progressbar_width="8dp"
-                    app:cpb_background_progressbar_color="@color/color2"
-                    app:cpb_progressbar_color="#4cf958"
-                    app:cpb_progressbar_width="8dp" />
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="200dp"
+                    android:layout_marginEnd="-82dp"
+                    android:rotation="-270"
+                    app:colorBack="@color/color2"
+                    app:colorFront="@color/colorMan" />
+
+                <com.example.wnsvy.kakaocalorie.Utils.SemiCircleProgress
+                    android:id="@+id/semiCircleWomanStep"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="200dp"
+                    android:layout_marginEnd="-82dp"
+                    android:rotation="270"
+                    android:rotationX="180"
+                    app:colorBack="@color/color2"
+                    app:colorFront="@color/colorWoman" />
 
                 <ImageView
                     android:id="@+id/steplog"
@@ -186,17 +177,31 @@
             android:weightSum="1">
 
             <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="80dp"
+                android:layout_height="80dp">
 
-                <com.mikhaellopez.circularprogressbar.CircularProgressBar
-                    android:id="@+id/calorieProgress"
+                <com.example.wnsvy.kakaocalorie.Utils.SemiCircleProgress
+                    android:id="@+id/semiCircleManCalorie"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    app:cpb_background_progressbar_width="8dp"
-                    app:cpb_background_progressbar_color="@color/color2"
-                    app:cpb_progressbar_color="#fad000"
-                    app:cpb_progressbar_width="8dp" />
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="200dp"
+                    android:layout_marginEnd="-82dp"
+                    android:rotation="-270"
+                    app:colorBack="@color/color2"
+                    app:colorFront="@color/colorMan" />
+
+                <com.example.wnsvy.kakaocalorie.Utils.SemiCircleProgress
+                    android:id="@+id/semiCircleWomanCalorie"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="200dp"
+                    android:layout_marginEnd="-82dp"
+                    android:rotation="270"
+                    android:rotationX="180"
+                    app:colorBack="@color/color2"
+                    app:colorFront="@color/colorWoman" />
 
                 <ImageView
                     android:id="@+id/calorielog"
@@ -214,29 +219,28 @@
                 android:orientation="vertical"
                 android:layout_marginTop="5dp">
 
-                    <TextView
-                        android:id="@+id/calorie"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color10"
-                        android:textSize="15sp"
-                        android:layout_gravity="center"
-                        android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/calorie"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color10"
+                    android:textSize="15sp"
+                    android:layout_gravity="center"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/calTag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color5"
-                        android:textSize="12sp"
-                        android:layout_gravity="center"
-                        android:text="Cal"
-                        android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/calTag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color5"
+                    android:textSize="12sp"
+                    android:layout_gravity="center"
+                    android:text="Cal"
+                    android:textStyle="bold" />
             </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
-
 
 </RelativeLayout>

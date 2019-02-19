@@ -151,7 +151,13 @@ public class UserDataActivity extends AppCompatActivity{
         textId.setText(id);
         textEmail.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.color6));
         textEmail.setText(email);
-
+        textEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UserDataActivity.this, CoupleActivity.class);
+                startActivity(intent);
+            }
+        });
 
         stepLog.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,11 +208,6 @@ public class UserDataActivity extends AppCompatActivity{
             }
         });
 
-        SemiCircleProgress semiCircleProgress = findViewById(R.id.semiCircle);
-        SemiCircleProgress semiCircleProgress2 = findViewById(R.id.semiCircle2);
-        semiCircleProgress.setProgressWithAnimation(2000,130);
-        semiCircleProgress2.setProgressWithAnimation(2000,80);
-        // progress는 180도 값이 max값. 따라서 max값이 10000일 경우를 비례식으로 계산하면 원하는 값일때 각 호의 progress값을 구할수있음
     }
 
     public void getSensorApi(){

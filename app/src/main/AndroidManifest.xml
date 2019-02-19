@@ -46,6 +46,7 @@
         <activity
             android:name=".Activity.LogActivity"
             android:label="@string/title_activity_log" />
+        <activity android:name=".Activity.CoupleActivity"></activity>
     </application>
 
 </manifest>
