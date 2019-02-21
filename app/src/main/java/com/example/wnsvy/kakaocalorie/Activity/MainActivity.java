@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -96,12 +97,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Session.getCurrentSession().removeCallback(callback);
-    }
-
     private void goToLoginActivity() {
         UserManagement.getInstance().me(new MeV2ResponseCallback() {
             @Override
@@ -144,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString("email", email);
                         editor.putLong("token",token);
+                        editor.putString("profileUrl",url);
                         editor.apply();   // 서비스 클래스에서 유저 정보값 쓰기위해 로그인 할 때 SharedPreference에 저장
 
                         try {
@@ -170,8 +166,7 @@ public class MainActivity extends AppCompatActivity {
                                     Log.d("AsyncTaskCallBack","fail"+ e);
                                 }
                             });
-                            jsonPostAsyncTask.execute();
-
+                            jsonPostAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -219,5 +214,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Session.getCurrentSession().removeCallback(callback);
+        try
+        {
+            if (jsonPostAsyncTask.getStatus() == AsyncTask.Status.RUNNING)
+            {
+                jsonPostAsyncTask.cancel(true);
+                Log.d("jsonPostAsyncTask(Login)","Success cancel AsyncTask");
+            }
+        }
+        catch (Exception e)
+        {
+            Log.d("jsonPostAsyncTask(Login)", String.valueOf(e));
+        }
+    }
 
 }

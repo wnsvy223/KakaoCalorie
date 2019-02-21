@@ -34,7 +34,7 @@ public class JsonPostAsyncTask extends AsyncTask<String,String,String> {
 
     public JsonPostAsyncTask(String restUrl, JSONObject jsonObj, Context context, AsyncTaskEventListener callback) {
         this.restUrl = restUrl;   // 생성자로 넘겨받은 url에 따라 기능이 분류되므로 백그라운드 작업 메소드에서 url에 따라 분기처리
-        this.jsonObj = jsonObj; // 생성자로 넘겨받은 jsonObject 데이터 -> 기능별 url에 따라 넘어오는 데이터들 분기
+        this.jsonObj = jsonObj; // 생성자로 넘겨받은 jsonObject 데이터 -> 기능별 url에 따라 넘어오는 데이터들 분기처리
         this.context = context;
         this.callback = callback;
     }
@@ -82,7 +82,7 @@ public class JsonPostAsyncTask extends AsyncTask<String,String,String> {
                     buffer.append(line);
                 }
 
-                return buffer.toString();//서버로 부터 받은 값을 리턴해줌 아마 OK!!가 들어올것임
+                return buffer.toString();//서버로 부터 받은 값
             } catch (SocketTimeoutException e) {
                 exceptionHandleToast(e);
                 e.printStackTrace();

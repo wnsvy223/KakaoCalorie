@@ -47,6 +47,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v2.0.9'
     implementation 'com.orhanobut:dialogplus:1.11@aar'
     implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.github.stfalcon:multiimageview:0.1'
 
 
     testImplementation 'junit:junit:4.12'

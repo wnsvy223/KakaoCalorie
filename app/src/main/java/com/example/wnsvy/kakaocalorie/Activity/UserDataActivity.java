@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -116,7 +117,7 @@ public class UserDataActivity extends AppCompatActivity{
     public ImageView stepLog;
     public static final String TAG = "GoogleFit FootStep Test";
     private OnDataPointListener mListener;
-
+    private JsonPostAsyncTask jsonPostAsyncTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +156,7 @@ public class UserDataActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(UserDataActivity.this, CoupleActivity.class);
+                intent.putExtra("myProfile",imageUrl);
                 startActivity(intent);
             }
         });
@@ -192,7 +194,7 @@ public class UserDataActivity extends AppCompatActivity{
             GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_CALORIES_EXPENDED);
             GlobalApplication.getGlobalApplicationContext().getFitnessRecord(DataType.TYPE_LOCATION_SAMPLE);
             GlobalApplication.getGlobalApplicationContext().readHIstoryData(footstepProgressBar,stepCount,distanceProgressBar,distance,calorieProgressBar,calorie,"display");
-            getSensorApi();
+            //getSensorApi();
         }
 
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)
@@ -315,7 +317,7 @@ public class UserDataActivity extends AppCompatActivity{
                         List<AppFriendInfo> list = result.getFriends();
                         List<Long> tokenList = new ArrayList<>();
                         tokenList.add(myToken);
-                        for (int i=0; i<list.size(); i++){
+                        for (int i = 0; i < list.size(); i++) {
                             long token = list.get(i).getId();
                             tokenList.add(token);
                         }
@@ -324,13 +326,12 @@ public class UserDataActivity extends AppCompatActivity{
                 });
     }
 
-
     public void getRank(List<Long> token){
         JSONObject jsonObject = new JSONObject();
         String restUrl = "http://192.168.0.29:3000/show-rank";
         try {
             jsonObject.accumulate("friendTokenList", token); // 서버로 보낼 친구들 토큰 리스트
-            JsonPostAsyncTask jsonPostAsyncTask = new JsonPostAsyncTask(restUrl, jsonObject
+            jsonPostAsyncTask = new JsonPostAsyncTask(restUrl, jsonObject
                     , getApplicationContext(), new AsyncTaskEventListener<String>() {
                 @Override
                 public void onSuccess(String res) {
@@ -365,7 +366,7 @@ public class UserDataActivity extends AppCompatActivity{
                     Log.d("AsyncTaskErr","Failed send to server"+ restUrl);
                 }
             });
-            jsonPostAsyncTask.execute();
+            jsonPostAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -382,7 +383,18 @@ public class UserDataActivity extends AppCompatActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        try
+        {
+            if (jsonPostAsyncTask.getStatus() == AsyncTask.Status.RUNNING)
+            {
+                jsonPostAsyncTask.cancel(true);
+                Log.d("jsonPostAsyncTask(Rank)","Success cancel AsyncTask");
+            }
+        }
+        catch (Exception e)
+        {
+            Log.d("jsonPostAsyncTask(Rank)", String.valueOf(e));
+        }
     }
 
     public void initView(){

@@ -42,7 +42,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="top|center"
-        android:layout_marginTop="179dp"
+        android:layout_marginTop="180dp"
         android:background="?attr/selectableItemBackgroundBorderless"/>
         <!-- API 21 이상부터 제공되는 Material Design ripple effect 클릭시 영역이 물결모양으로 퍼지는 효과-->
 
