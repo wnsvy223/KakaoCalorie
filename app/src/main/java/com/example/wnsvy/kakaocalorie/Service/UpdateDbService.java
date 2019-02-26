@@ -28,7 +28,6 @@ public class UpdateDbService extends SimpleJobService{
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("user",MODE_PRIVATE );
         String email = sharedPreferences.getString("email", "");
 
-        // 4시~5시 사이에 카운트 리셋 및 DB 업데이트
         if(hour > 22 && hour < 24){
             if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this), fitnessOptions)) {
                 sendNotification("KakaoCalorie", "오늘의 활동 정보 업데이트");
