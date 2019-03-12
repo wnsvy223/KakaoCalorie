@@ -157,12 +157,15 @@ public class MainActivity extends AppCompatActivity {
                                     ,getApplicationContext(), new AsyncTaskEventListener<String>() {
                                 @Override
                                 public void onSuccess(String result) {
+                                    // 성공
                                     Log.d("AsyncTaskCallBack","success" + result);
                                 }
 
                                 @Override
                                 public void onFailure(Exception e) {
+                                    // 실패 - 세션종료, 비동기 실행 취소
                                     Session.getCurrentSession().removeCallback(callback);
+                                    jsonPostAsyncTask.cancel(true);
                                     Log.d("AsyncTaskCallBack","fail"+ e);
                                 }
                             });

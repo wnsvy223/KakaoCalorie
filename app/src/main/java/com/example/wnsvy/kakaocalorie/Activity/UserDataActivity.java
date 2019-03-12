@@ -364,6 +364,7 @@ public class UserDataActivity extends AppCompatActivity{
                 @Override
                 public void onFailure(Exception e) {
                     Log.d("AsyncTaskErr","Failed send to server"+ restUrl);
+                    jsonPostAsyncTask.cancel(true);
                 }
             });
             jsonPostAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

@@ -41,7 +41,9 @@ public class JsonPostAsyncTask extends AsyncTask<String,String,String> {
 
     @Override
     protected String doInBackground(String... urls) {
-
+        if(isCancelled()){
+            return null;
+        }
         try {
             //JSONObject를 만들고 key value 형식으로 값을 저장해준다.
             JSONObject jsonObject = jsonObj;

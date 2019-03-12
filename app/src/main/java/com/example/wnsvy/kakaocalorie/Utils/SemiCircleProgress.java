@@ -106,6 +106,9 @@ public class SemiCircleProgress extends View implements ValueAnimator.AnimatorUp
 
     public void setProgressWithAnimation(long duration, int progress) {
         // sets the range of our value
+            if(progress > 180){
+                progress = 180;
+            }
             mAnimator = ValueAnimator.ofInt(0, progress);  // 반원이기 때문에 0 ~180도 사이의 값을 지정하여 그 위치까지 그려지도록 세팅 내가 원하는 값을 사용하려면 비율값으로 해야할듯
             // sets the duration of our animation
             mAnimator.setDuration(duration);

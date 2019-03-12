@@ -4,15 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="@color/backGround"
     tools:context=".Activity.CoupleActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_couple"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </android.support.v7.widget.Toolbar>
+
 
     <com.stfalcon.multiimageview.MultiImageView
         android:id="@+id/profile_couple"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="180dp" />
+        android:layout_marginTop="180dp"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
 
     <ImageView
         android:layout_centerHorizontal="true"
@@ -27,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="60dp"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -85,15 +94,33 @@
                 android:orientation="vertical"
                 android:layout_marginTop="5dp">
 
-                <TextView
-                    android:id="@+id/distance"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/color10"
-                    android:layout_gravity="center"
-                    android:textSize="15sp"
-                    android:gravity="center"
-                    android:textStyle="bold" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/distance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color10"
+                        android:layout_gravity="center"
+                        android:textSize="15sp"
+                        android:gravity="center"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/distanceOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color10"
+                        android:layout_gravity="center"
+                        android:textSize="15sp"
+                        android:gravity="center"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
 
                 <TextView
                     android:id="@+id/distanceTag"
@@ -104,6 +131,7 @@
                     android:textSize="12sp"
                     android:text="Km"
                     android:textStyle="bold" />
+
             </LinearLayout>
 
         </LinearLayout>
@@ -160,14 +188,31 @@
                 android:orientation="vertical"
                 android:layout_marginTop="5dp">
 
-                <TextView
-                    android:id="@+id/stepCount"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/color10"
-                    android:textSize="15sp"
-                    android:layout_gravity="center"
-                    android:textStyle="bold" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/stepCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color10"
+                        android:textSize="15sp"
+                        android:layout_gravity="center"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/stepCountOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="@color/color10"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
 
                 <TextView
                     android:id="@+id/stepTag"
@@ -234,14 +279,30 @@
                 android:orientation="vertical"
                 android:layout_marginTop="5dp">
 
-                <TextView
-                    android:id="@+id/calorie"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/color10"
-                    android:textSize="15sp"
-                    android:layout_gravity="center"
-                    android:textStyle="bold" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/calorie"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color10"
+                        android:textSize="15sp"
+                        android:layout_gravity="center"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/calorieOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color10"
+                        android:textSize="15sp"
+                        android:layout_gravity="center"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/calTag"
@@ -252,6 +313,7 @@
                     android:layout_gravity="center"
                     android:text="Cal"
                     android:textStyle="bold" />
+
             </LinearLayout>
 
         </LinearLayout>

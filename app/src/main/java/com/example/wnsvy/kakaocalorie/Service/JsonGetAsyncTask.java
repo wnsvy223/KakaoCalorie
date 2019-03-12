@@ -34,7 +34,9 @@ public class JsonGetAsyncTask extends AsyncTask<String,String,String> {
 
     @Override
     protected String doInBackground(String... urls) {
-
+        if(isCancelled()){
+            return null;
+        }
         try {
             HttpURLConnection con = null;
             BufferedReader reader = null;
